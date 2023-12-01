@@ -1,7 +1,11 @@
 package com.link.aoc2023inKotlin.reader
 
+import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Component
+import org.springframework.util.FileCopyUtils
 import org.springframework.util.ResourceUtils
+import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 
 @Component
 class FileReader {
@@ -11,7 +15,10 @@ class FileReader {
         .dropLast(1) // Remove last empty line
         .map { it.replace("\r", "") }
 
-    private fun getFileAsText(fileName: String) = ResourceUtils
-        .getFile("classpath:inputs/$fileName.txt")
-        .readText()
+    fun getFileAsText(fileName: String): String {
+        val resource = ClassPathResource("inputs/$fileName.txt")
+        val inputStream = resource.inputStream
+        val reader = InputStreamReader(inputStream, StandardCharsets.UTF_8)
+        return reader.use { it.readText() }
+    }
 }
