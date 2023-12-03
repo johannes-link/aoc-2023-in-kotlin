@@ -5,7 +5,6 @@ import com.link.aoc2023inKotlin.model.CubeGameRound
 import com.link.aoc2023inKotlin.reader.FileReader
 import org.springframework.stereotype.Component
 
-
 @Component
 class Day02(
     private val fileReader: FileReader
