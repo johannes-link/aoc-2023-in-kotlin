@@ -1,9 +1,6 @@
 package com.link.aoc2023inKotlin
 
-import com.link.aoc2023inKotlin.solution.Day01
-import com.link.aoc2023inKotlin.solution.Day02
-import com.link.aoc2023inKotlin.solution.Day03
-import com.link.aoc2023inKotlin.solution.Day04
+import com.link.aoc2023inKotlin.solution.*
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
@@ -31,5 +28,10 @@ fun main(args: Array<String>) {
 	val day04 = aoc2023.getBean(Day04::class.java)
 	println( "Day 4, Part A: " + day04.solvePartA("day04") )
 	println( "Day 4, Part B: " + day04.solvePartB("day04") )
+	println()
+
+	val day05 = aoc2023.getBean(Day05::class.java)
+	println( "Day 5, Part A: " + day05.solvePartA("day05") )
+	println( "Day 5, Part B: " + day05.solvePartB("day05") )
 	println()
 }
