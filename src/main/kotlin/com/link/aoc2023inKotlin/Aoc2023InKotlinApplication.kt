@@ -32,6 +32,12 @@ fun main(args: Array<String>) {
 
 	val day05 = aoc2023.getBean(Day05::class.java)
 	println( "Day 5, Part A: " + day05.solvePartA("day05") )
-	println( "Day 5, Part B: " + day05.solvePartB("day05") )
+	// println( "Day 5, Part B: " + day05.solvePartB("day05") ) // Removed for performance
 	println()
+
+	val day06 = aoc2023.getBean(Day06::class.java)
+	println( "Day 6, Part A: " + day06.solvePartA() )
+	println( "Day 6, Part B: " + day06.solvePartB() )
+	println()
+
 }
