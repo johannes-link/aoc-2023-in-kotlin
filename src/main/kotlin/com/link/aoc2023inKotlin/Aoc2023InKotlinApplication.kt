@@ -3,6 +3,7 @@ package com.link.aoc2023inKotlin
 import com.link.aoc2023inKotlin.solution.*
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import java.math.BigInteger
 
 @SpringBootApplication
 class Aoc2023InKotlinApplication
@@ -47,7 +48,7 @@ fun main(args: Array<String>) {
 
 	val day08 = aoc2023.getBean(Day08::class.java)
 	println( "Day 8, Part A: " + day08.solvePartA() )
-//	println( "Day 8, Part B: " + day08.solvePartB() )
+	println( "Day 8, Part B: " + day08.solvePartB() )
 	println()
 
 	val day09 = aoc2023.getBean(Day09::class.java)

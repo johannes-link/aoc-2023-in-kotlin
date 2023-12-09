@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import java.math.BigInteger
 
 @SpringBootTest
 class Day08Tests {
@@ -23,6 +24,6 @@ class Day08Tests {
 
     @Test
     fun `Should return expected result fo part B`() {
-        assertEquals(6L, day08.solvePartB("day08c"))
+        assertEquals(BigInteger.valueOf(6L), day08.solvePartB("day08c"))
     }
 }

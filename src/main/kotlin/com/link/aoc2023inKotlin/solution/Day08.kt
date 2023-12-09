@@ -1,8 +1,9 @@
 package com.link.aoc2023inKotlin.solution
 
-import com.link.aoc2023inKotlin.model.CamelCardHand
 import com.link.aoc2023inKotlin.reader.FileReader
 import org.springframework.stereotype.Component
+import java.math.BigInteger
+import kotlin.math.abs
 
 @Component
 class Day08(
@@ -10,7 +11,7 @@ class Day08(
 ) {
     fun solvePartA(fileName: String = "day08"): Long {
         val (instructions, network) = this.parseInputFile(fileName = fileName)
-        var steps: Long = 1L
+        var steps = 1L
         var index = 0
         var start = "AAA"
 
@@ -30,34 +31,41 @@ class Day08(
         }
     }
 
-    fun solvePartB(fileName: String = "day08"): Long {
+    fun solvePartB(fileName: String = "day08"): BigInteger {
         val (instructions, network) = this.parseInputFile(fileName = fileName)
-        var startPositions = network.keys.filter { it.last() == 'A' }
-        var steps = 1L
+        return network
+            .keys
+            .filter { it.last() == 'A' }
+            .map { findLoopSize(startPosition=it, instructions=instructions, network=network) }
+            .let { findLeastCommonMultiple(values = it) }
+    }
+
+    private fun findLeastCommonMultiple(values: List<Long>) = values
+        .map { BigInteger.valueOf(it) }
+        .reduce { acc, bigInteger -> acc * bigInteger / acc.gcd(bigInteger) }
+
+    private fun findLoopSize(
+        startPosition: String,
+        instructions: String,
+        network: Map<String, Pair<String, String>>
+    ): Long {
         var index = 0
+        var stepsSinceZ = 0L
+        var start = startPosition
 
         while (true) {
-            startPositions = startPositions
-                .map { findNewStartPosition(key = it, instruction = instructions[index], network = network) }
+            start = findNewStartPosition(key = start, instruction = instructions[index], network = network)
+            stepsSinceZ++
 
-            if (startPositions.all { it.endsWith('Z') }) {
-                return steps
+
+            if (start.endsWith('Z')) {
+                return stepsSinceZ
             }
 
             when (index == instructions.length-1) {
                 true -> index = 0
                 else -> index++
             }
-
-            if(steps == Long.MAX_VALUE){
-                println("ALARM")
-            }
-
-            if (steps%10000000 == 0L){
-                println(steps)
-            }
-
-            steps++
         }
     }
 
@@ -66,12 +74,12 @@ class Day08(
         instruction: Char,
         network: Map<String, Pair<String, String>>
     ) = when (instruction == 'L') {
-        true -> network[key]!!.first
-        else -> network[key]!!.second
+        true -> network.getValue(key).first
+        else -> network.getValue(key).second
     }
 
     private fun parseInputFile(fileName: String): Pair<String, Map<String, Pair<String, String>>> {
-        var input = fileReader.readStringsFromFile(fileName)
+        val input = fileReader.readStringsFromFile(fileName)
         val instructions = input.first()
 
         val network = input
