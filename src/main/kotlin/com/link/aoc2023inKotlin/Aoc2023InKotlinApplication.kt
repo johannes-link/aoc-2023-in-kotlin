@@ -50,4 +50,8 @@ fun main(args: Array<String>) {
 //	println( "Day 8, Part B: " + day08.solvePartB() )
 	println()
 
+	val day09 = aoc2023.getBean(Day09::class.java)
+	println( "Day 9, Part A: " + day09.solvePartA() )
+	println( "Day 9, Part B: " + day09.solvePartB() )
+	println()
 }
