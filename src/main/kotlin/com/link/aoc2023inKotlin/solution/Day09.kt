@@ -14,8 +14,8 @@ class Day09(
 
     fun solvePartB(fileName: String = "day09") = fileReader
         .readStringsFromFile(fileName)
-        .map { it.toLongList() }
-        .sumOf { predictBeforeValue(sequence = it) }
+        .map { it.toLongList().reversed() }
+        .sumOf { predictNextValue(sequence = it) }
 
     fun predictNextValue(sequence: List<Long>): Long {
         val differences = sequence.zipWithNext { a, b -> b-a }
@@ -25,16 +25,6 @@ class Day09(
             else -> sequence.last() + predictNextValue(sequence = differences)
         }
     }
-
-    fun predictBeforeValue(sequence: List<Long>): Long {
-        val differences = sequence.zipWithNext { a, b -> b-a }
-
-        return when (differences.all { it == 0L }) {
-            true -> sequence.first()
-            else -> sequence.first() - predictBeforeValue(sequence = differences)
-        }
-    }
-
     private fun String.toLongList() = this
         .split(" ")
         .map { it.toLong() }
