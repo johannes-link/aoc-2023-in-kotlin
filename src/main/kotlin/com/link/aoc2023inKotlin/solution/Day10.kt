@@ -1,5 +1,6 @@
 package com.link.aoc2023inKotlin.solution
 
+import com.link.aoc2023inKotlin.model.Coordinate
 import com.link.aoc2023inKotlin.reader.FileReader
 import org.springframework.stereotype.Component
 import kotlin.math.max
@@ -21,8 +22,7 @@ class Day10(
         var inputMap = loadInputMap(fileName = fileName)
         val startPosition = findPositionOf(char = 'S', inputMap = inputMap)
         inputMap = replaceStartPosition(inputMap = inputMap, startPosition = startPosition)
-        val loopTmp = findMaxSteps(inputMap = inputMap, startPos = startPosition)
-            .second
+        val loopTmp = findMaxSteps(inputMap = inputMap, startPos = startPosition).second
 
         val points = inputMap
             .flatMapIndexed { y, chars -> chars.mapIndexed { x, c -> Triple(x,y,c) } }
@@ -69,18 +69,17 @@ class Day10(
     }
 
 
-
     private fun findMaxSteps(
         inputMap: Array<CharArray>,
-        startPos: Pair<Int, Int>
-    ): Pair<Long, MutableList<Triple<Int, Int, Char>>> {
-        val valuesToCheck = mutableListOf(Pair(startPos, 0L))
-        val alreadyVisited = mutableListOf<Pair<Int, Int>>()
+        startPos: Coordinate
+    ): Pair<Long, List<Triple<Int, Int, Char>>> {
+        val valuesToCheck = mutableListOf(Pair(Coordinate(startPos.x, startPos.y), 0L))
+        val alreadyVisited = mutableListOf<Coordinate>()
         var maxSteps = 0L
 
         while (valuesToCheck.isNotEmpty()) {
             val currentPosition = valuesToCheck.removeFirst()
-            val currentSymbol = inputMap.getOrNull(currentPosition.first.second)?.getOrNull(currentPosition.first.first)
+            val currentSymbol = inputMap.getOrNull(currentPosition.first.y)?.getOrNull(currentPosition.first.x)
 
             if (currentSymbol == '.') {
                 continue
@@ -91,8 +90,8 @@ class Day10(
             alreadyVisited.add(currentPosition.first)
 
             val (nextPositionA, nextPositionB) = findNextPositions(
-                startPosition = currentPosition.first,
-                inputMap = inputMap
+                startPosition = Coordinate(currentPosition.first.x, currentPosition.first.y),
+                symbol = inputMap[currentPosition.first.y][currentPosition.first.x]
             )
 
             valuesToCheck.add(Pair(nextPositionA, currentPosition.second + 1))
@@ -101,18 +100,17 @@ class Day10(
             maxSteps = max(maxSteps, currentPosition.second)
         }
 
-        return Pair(maxSteps, alreadyVisited.map { Triple(it.first, it.second, inputMap[it.second][it.first]) }.toMutableList())
+        return Pair(maxSteps, alreadyVisited.map { Triple(it.x, it.y, inputMap[it.y][it.x]) })
     }
 
     private fun replaceStartPosition(
         inputMap: Array<CharArray>,
-        startPosition: Pair<Int, Int>
+        startPosition: Coordinate
     ): Array<CharArray> {
-        val (x, y)  = startPosition
-        val north   = "|7F".contains( inputMap.getOrNull(y-1)?.getOrNull(x) ?: '.' )
-        val west    = "-LF".contains( inputMap.getOrNull(y)?.getOrNull(x-1) ?: '.' )
-        val south   = "|LJ".contains( inputMap.getOrNull(y+1)?.getOrNull(x) ?: '.' )
-        val east    = "-J7".contains( inputMap.getOrNull(y)?.getOrNull(x+1) ?: '.')
+        val north   = "|7F".contains( inputMap.getOrNull(startPosition.y-1)?.getOrNull(startPosition.x) ?: '.' )
+        val west    = "-LF".contains( inputMap.getOrNull(startPosition.y)?.getOrNull(startPosition.x-1) ?: '.' )
+        val south   = "|LJ".contains( inputMap.getOrNull(startPosition.y+1)?.getOrNull(startPosition.x) ?: '.' )
+        val east    = "-J7".contains( inputMap.getOrNull(startPosition.y)?.getOrNull(startPosition.x+1) ?: '.')
 
         val symbol = when {
             north && south  -> '|'
@@ -129,16 +127,16 @@ class Day10(
     }
 
     private fun findNextPositions(
-        startPosition: Pair<Int, Int>,
-        inputMap: Array<CharArray>
-    ) = when (val currentSymbol = inputMap[startPosition.second][startPosition.first]) {
-            '|' -> Pair(Pair(startPosition.first, startPosition.second + 1), Pair(startPosition.first, startPosition.second - 1))
-            '-' -> Pair(Pair(startPosition.first + 1, startPosition.second), Pair(startPosition.first - 1, startPosition.second))
-            'L' -> Pair(Pair(startPosition.first, startPosition.second - 1 ), Pair(startPosition.first + 1, startPosition.second))
-            'J' -> Pair(Pair(startPosition.first, startPosition.second - 1 ), Pair(startPosition.first - 1, startPosition.second))
-            '7' -> Pair(Pair(startPosition.first, startPosition.second + 1 ), Pair(startPosition.first - 1, startPosition.second))
-            'F' -> Pair(Pair(startPosition.first, startPosition.second + 1 ), Pair(startPosition.first + 1, startPosition.second))
-            else -> throw Exception("$currentSymbol is invalid")
+        startPosition: Coordinate,
+        symbol: Char
+    ) = when (symbol) {
+            '|' -> Pair(Coordinate(startPosition.x, startPosition.y + 1), Coordinate(startPosition.x, startPosition.y - 1))
+            '-' -> Pair(Coordinate(startPosition.x + 1, startPosition.y), Coordinate(startPosition.x - 1, startPosition.y))
+            'L' -> Pair(Coordinate(startPosition.x, startPosition.y - 1 ), Coordinate(startPosition.x + 1, startPosition.y))
+            'J' -> Pair(Coordinate(startPosition.x, startPosition.y - 1 ), Coordinate(startPosition.x - 1, startPosition.y))
+            '7' -> Pair(Coordinate(startPosition.x, startPosition.y + 1 ), Coordinate(startPosition.x - 1, startPosition.y))
+            'F' -> Pair(Coordinate(startPosition.x, startPosition.y + 1 ), Coordinate(startPosition.x + 1, startPosition.y))
+            else -> throw Exception("Symbol is invalid")
         }
 
     private fun loadInputMap(fileName: String) = fileReader
@@ -149,7 +147,7 @@ class Day10(
     private fun findPositionOf(
         char: Char,
         inputMap: Array<CharArray>
-    ): Pair<Int, Int> {
+    ): Coordinate {
         val yPos = inputMap
             .mapIndexedNotNull { index, chars -> when(chars.contains(char)) {
                 true -> index
@@ -159,6 +157,6 @@ class Day10(
 
         val xPos = inputMap[yPos].indexOf(char)
 
-        return Pair(xPos, yPos)
+        return Coordinate(xPos, yPos)
     }
 }
