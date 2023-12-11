@@ -24,7 +24,7 @@ class Day10Tests {
 
     @ParameterizedTest
     @CsvSource(
-//        "1,day10a",
+        "1,day10a",
         "4,day10c",
         "4,day10d",
         "8,day10e",
