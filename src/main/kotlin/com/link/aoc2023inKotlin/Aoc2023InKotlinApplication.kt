@@ -10,7 +10,7 @@ class Aoc2023InKotlinApplication
 fun main(args: Array<String>) {
 	val aoc2023 = runApplication<Aoc2023InKotlinApplication>(*args)
 
-	val day = aoc2023.getBean(Day11::class.java)
+	val day = aoc2023.getBean(Day12::class.java)
 	println( "Part A: " + day.solvePartA() )
 	println( "Part B: " + day.solvePartB() )
 }
